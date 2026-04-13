@@ -15,41 +15,7 @@ be generated and **uploaded** to the corresponding linked release on SW360.
 
 The grey box in the diagram below represents the automated workflow as implemented in this project:
 
-```plantuml
-hide footbox
-actor Developer #ffb900
-participant SW360
-box "Fossology Workflow" #adbecb
-participant "Workflow Engine" as wf
-end box
-participant Fossology
-actor "Clearing Expert" as ce #4bb9b9
-Developer -> SW360: Create new project, components, releases
-activate SW360 #ffb900
-Developer -> SW360: Upload OSS source files
-SW360 -> wf: Retrieve source files
-activate wf
-wf -> Fossology: Create folder structure according\n to SW360 component names
-Developer -> SW360: Issue a clearing request
-deactivate SW360
-SW360 --> ce: Send request to clearing team
-ce -> Fossology: Start clearing
-activate Fossology #4bb9b9
-...
-note right of Fossology #c3f0f0
-    Time spend on Fossology
-    to perform all the clearings
-end note
-...
-wf <- Fossology: Retrieves reports
-ce -> Fossology: Set clearing status to "closed"
-deactivate Fossology
-wf -> SW360: Uploads reports\nSets clearing status
-deactivate wf
-activate SW360 #ffb900
-Developer <- SW360: Retrieves product clearing
-deactivate SW360
-```
+![Fossology workflow sequence diagram](docs/fossology-workflow-plantuml.png)
 
 ## Required infrastructure and configuration
 
