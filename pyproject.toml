@@ -1,0 +1,28 @@
+[project]
+name = "fossology-workflow"
+version = "1.5.3"
+description = "Automate file exchange between sw360 <-> fossology"
+requires-python = ">=3.13"
+dependencies = [
+    "tenacity>=9.1.2",
+    "sw360>=1.10.1",
+    "coloredlogs>=15.0.1",
+    "fossology>=3.3.2",
+    "click>=8.3.1",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "python-gitlab>=8.0.0", 
+    "ruff>=0.14.14",
+]
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

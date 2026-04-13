@@ -1,0 +1,12 @@
+.env
+.venv/
+.vscode
+.coverage
+coverage.xml
+junit.xml
+*.log
+*.csv
+**/__pycache__/
+.mypy_cache
+.pytest_cache
+htmlcov/

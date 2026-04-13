@@ -1,0 +1,14 @@
+# Exclude ignored directories.
+exclude = [
+    ".git",
+    ".pytest_cache",
+    ".venv",
+    "htmlcov",
+]
+line-length = 120
+
+[lint]
+ignore = ["E203", "E231", "E701", "W503", "W605"]
+
+[format]
+quote-style = "double"

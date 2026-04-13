@@ -1,0 +1,18 @@
+branches:
+  - main
+plugins:
+  - "@semantic-release/commit-analyzer"
+  - "@semantic-release/release-notes-generator"
+  - "@semantic-release/changelog"
+  - "@semantic-release/gitlab"
+  - - "semantic-release-replace-plugin"
+    - replacements:
+      - files:
+        - pyproject.toml
+        from: "^version = \"\\S+\""
+        to: "version = \"${nextRelease.version}\""
+  - - "@semantic-release/git"
+    - assets:
+        - CHANGELOG.md
+        - pyproject.toml
+      message: "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"

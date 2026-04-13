@@ -1,0 +1,109 @@
+image: ghcr.io/astral-sh/uv:python3.13-bookworm
+
+stages:
+  - test
+  - release
+  - deploy
+
+include:
+  - template: "Workflows/MergeRequest-Pipelines.gitlab-ci.yml"
+  - component: code.siemens.com/code-ops/ci-components/python-lint@~latest
+    inputs:
+      commitizen_enabled: true
+      editorconfig_checker_enabled: true
+  - component: code.siemens.com/code-ops/ci-components/release-changelog@~latest
+    inputs:
+      rules:
+        - if: $CI_PIPELINE_SOURCE == "web"
+          when: never
+      tags:
+        - DOCKER
+
+variables:
+  http_proxy: $CODE_PROXY
+  https_proxy: $CODE_PROXY
+  no_proxy: .siemens.com,.siemens-healthineers.com
+  SW360_CR:
+    description: "the clearing request id, e.g. `CR-233`"
+  SW360_PROJECT:
+    description: "the id of the project used to collect components source files and check for available clearing reports, e.g. `5988cd035aba0c61d706228c030b679e`"
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE != "merge_request_event"'
+
+verify:
+  stage: test
+  script:
+    - uv sync --no-install-project
+    - uv run ruff check --select I --fix .
+    - uv run ruff format --check
+    - uv run pytest -c pytest-ci.ini
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+      when: always
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "web"
+      when: never
+    - if: $CI_COMMIT_BRANCH != "main"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_COMMIT_TAG
+      when: never
+  artifacts:  
+    expire_in: 5d
+    expose_as: 'Coverage report'
+    paths:
+      - htmlcov/
+    reports:
+      junit: junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+  coverage: '/TOTAL.*\s(\d+)%/'
+
+automate_isr_upload:
+  stage: deploy
+  script:
+    - uv sync --no-group dev
+    - uv run python fossology_workflow create-initial-reports
+  artifacts:
+    paths:
+      - automated-workflow-*.log
+      - workflow-summary-*.csv
+      - "*.docx"
+      - "*.xml"
+    expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "schedule" && $SW360_TOKEN && $FOSSOLOGY_TOKEN && $FOSSOLOGY_GROUP
+      when: always
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+      when: never
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "web"
+      when: never
+
+automate_clearing:
+  stage: deploy
+  script:
+    - uv sync --no-group dev
+    - uv run python fossology_workflow request-clearing
+  artifacts:
+    paths:
+      - automated-workflow-*.log
+      - workflow-summary-*.csv
+      - "*.docx"
+      - "*.xml"
+    expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "web" && $SW360_TOKEN && ($SW360_CR || $SW360_PROJECT) && $FOSSOLOGY_TOKEN && $FOSSOLOGY_GROUP
+      when: always
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push" && $SW360_TOKEN && ($SW360_CR || $SW360_PROJECT) && $FOSSOLOGY_TOKEN && $FOSSOLOGY_GROUP
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+
+publish:
+  stage: deploy
+  script:
+    - uv build
+    - uv publish --index-url $CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/pypi/ --username gitlab-ci-token --password $CI_JOB_TOKEN
+  rules:
+    - if: $CI_COMMIT_TAG
