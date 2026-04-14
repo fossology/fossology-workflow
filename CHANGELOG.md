@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.5](https://github.com/fossology/fossology-workflow/compare/fossology-workflow-v1.5.4...fossology-workflow-v1.5.5) (2026-04-14)
+
+
+### Documentation
+
+* add badge with link to Pypi package ([dc81604](https://github.com/fossology/fossology-workflow/commit/dc81604e69440562ca96c849cf2e8de62b04a4e5))
+
 ## [1.5.4](https://github.com/fossology/fossology-workflow/compare/fossology-workflow-v1.5.3...fossology-workflow-v1.5.4) (2026-04-14)
 
 
