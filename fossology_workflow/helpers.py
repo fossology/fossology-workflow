@@ -7,10 +7,10 @@ import os
 import re
 import time  # noqa: F401
 import unicodedata
-from typing import List, Optional
+from typing import List, Optional, cast
 
 from fossology import Fossology
-from fossology.obj import Upload
+from fossology.obj import ShowJob, Upload
 from tenacity import RetryError, retry, retry_if_result, stop_after_delay, wait_fixed
 
 from fossology_workflow.models import (
@@ -196,7 +196,7 @@ def wait_for_completion_expected_agents(
     )
     def check_agents_completion() -> bool:
         try:
-            jobs = foss.jobs_history(upload=upload)
+            jobs = cast(list[ShowJob], foss.jobs_history(upload=upload))
         except Exception as e:
             logger.warning(
                 f"Error while checking agents for {upload.uploadname}, will retry: {e}"
@@ -229,7 +229,7 @@ def wait_for_completion_expected_agents(
 def agents_started_or_completed(
     foss: Fossology, upload: Upload, mandatory_agents: list[str]
 ) -> bool:
-    jobs = foss.jobs_history(upload=upload)
+    jobs = cast(list[ShowJob], foss.jobs_history(upload=upload))
     started_or_completed_agents = set()
     for job in jobs:
         for agent in job.jobQueue:

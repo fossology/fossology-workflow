@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
   pull-requests: write
 
 jobs:
@@ -22,8 +23,8 @@ jobs:
         id: release
         uses: googleapis/release-please-action@v4
         with:
-          release-type: python
-          package-name: fossology-workflow
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
 
   publish:
     needs: release

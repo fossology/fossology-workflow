@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "4654ae9b8ddef82b32cc1c90e43fd5e12e6c6e0e",
+  "last-release-sha": "4654ae9b8ddef82b32cc1c90e43fd5e12e6c6e0e",
+  "packages": {
+    ".": {
+      "release-type": "python",
+      "package-name": "fossology-workflow"
+    }
+  }
+}
