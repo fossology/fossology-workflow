@@ -4,6 +4,7 @@
 [![uv](https://img.shields.io/badge/dependency%20manager-uv-5f5fff.svg)](https://docs.astral.sh/uv/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 [![CI](https://github.com/fossology/fossology-workflow/actions/workflows/ci.yml/badge.svg)](https://github.com/fossology/fossology-workflow/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/fossology-workflow.svg)](https://pypi.org/project/fossology-workflow/)
 
 > Note: This work has been mostly sponsored by [Siemens Healthineers](https://github.com/Siemens-Healthineers).
 
