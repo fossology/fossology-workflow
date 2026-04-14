@@ -1,6 +1,6 @@
 [project]
 name = "fossology-workflow"
-version = "1.5.3"
+version = "0.1.0"
 description = "Automate file exchange between sw360 <-> fossology"
 requires-python = ">=3.13"
 dependencies = [
